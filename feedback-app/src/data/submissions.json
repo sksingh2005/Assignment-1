@@ -1,0 +1,15 @@
+[
+  {
+    "id": "593fed5b-f14b-4f10-8095-3ea2e70e8523",
+    "rating": 5,
+    "review": "lk",
+    "timestamp": "2025-12-14T18:32:17.698Z",
+    "aiResponse": {
+      "userResponse": "Thank you for your feedback! We are processing it.",
+      "summary": "Error generating summary.",
+      "actions": [
+        "Check system logs"
+      ]
+    }
+  }
+]
