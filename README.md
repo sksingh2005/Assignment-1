@@ -2,17 +2,17 @@
 
 ## Task 1: Yelp Review Classification
 Located in `task1_analysis.ipynb`.  
-Run the notebook to see Zero-Shot, Few-Shot, and Chain-of-Thought prompting strategies.
+Run the notebook to see Zero-Shot, Few-Shot, and Chain-of-Thought prompting strategies using **Gemini 2.5 Flash**.
 
 ## Task 2: AI Feedback System (Web App)
 Located in `feedback-app/`.  
-A Next.js 14 app with **Shadcn UI** and **Supabase** integration.
+A Next.js 14 app with **Shadcn UI**, **Supabase** integration, and **Recharts** for analytics.
 
 ### Setup
 1. `cd feedback-app`
 2. `npm install`
 3. Copy `.env.example` to `.env.local` and fill in your keys:
-   - `GEMINI_API_KEY`: For AI analysis.
+   - `GEMINI_API_KEY`: For AI analysis (uses **Gemini 2.5 Flash**).
    - `NEXT_PUBLIC_SUPABASE_URL`: From your Supabase project settings.
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: From your Supabase project settings.
 
@@ -35,5 +35,6 @@ create table feedback (
 
 ### Features
 - **UI**: Modern, responsive design using Shadcn UI (Cards, Buttons, Inputs).
+- **Analytics**: Interactive charts for Rating Distribution and Submission Trends using Recharts.
 - **Storage**: Hybrid store (Supabase primary, local JSON fallback).
-- **AI**: Gemini integration for sentiment response and actionable items.
+- **AI**: Gemini 2.5 Flash integration for sentiment response and actionable items.
