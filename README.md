@@ -35,6 +35,16 @@ create table feedback (
 
 ### Features
 - **UI**: Modern, responsive design using Shadcn UI (Cards, Buttons, Inputs).
-- **Analytics**: Interactive charts for Rating Distribution and Submission Trends using Recharts.
+- **Analytics**: Interactive analytics dashboard with Recharts:
+  - Sentiment Gauge (real-time satisfaction score)
+  - Keyword Cloud (frequent words in reviews)
+  - Rating Distribution (bar chart)
+  - Submission Volume Trend (area chart)
+  - Average Rating Over Time (line chart)
+  - Weekly Activity Heatmap (day-of-week analysis)
+  - AI Response Performance KPIs
 - **Storage**: Hybrid store (Supabase primary, local JSON fallback).
 - **AI**: Gemini 2.5 Flash integration for sentiment response and actionable items.
+
+## Flow Diagram of Task 2
+![User Dashboard](feedback-app/public/image.png)

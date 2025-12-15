@@ -35,7 +35,7 @@ export default function AdminDashboard() {
     const [submissions, setSubmissions] = useState<Submission[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
-    const [activeView, setActiveView] = useState<ViewType>('feed');
+    const [activeView, setActiveView] = useState<ViewType>('charts');
 
     const fetchSubmissions = async (opts?: { manual?: boolean }) => {
         try {
