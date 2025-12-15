@@ -269,8 +269,7 @@ export default function UserDashboard() {
                 <CardFooter className="flex justify-center">
                   <Button
                     onClick={resetForm}
-                    variant="outline"
-                    className="w-full border-white/25 text-white hover:bg-white/10"
+                    className="w-full bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-pink-500 hover:from-indigo-600 hover:via-fuchsia-600 hover:to-pink-600 text-white font-medium shadow-[0_10px_30px_rgba(236,72,153,0.3)] border-0"
                   >
                     Send another round
                   </Button>

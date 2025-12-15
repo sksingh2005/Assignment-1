@@ -2,12 +2,13 @@
 
 import {
     BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
-    AreaChart, Area, CartesianGrid, LineChart, Line, RadialBarChart, RadialBar, Legend
+    AreaChart, Area, CartesianGrid, LineChart, Line, RadialBarChart, RadialBar, Legend, PieChart, Pie
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Submission } from '@/types';
-import { useMemo } from 'react';
-import { TrendingUp, BarChart3, Cloud, Gauge, Calendar, Clock, Activity } from 'lucide-react';
+import { useMemo, useState, useEffect } from 'react';
+import { TrendingUp, BarChart3, Cloud, Gauge, Calendar, Clock, Activity, Zap, Heart, Target, Sparkles, Brain, MessageCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ChartsViewProps {
     submissions: Submission[];
@@ -91,6 +92,215 @@ function SentimentGauge({ score }: { score: number }) {
                 </span>
             </div>
         </div>
+    );
+}
+
+// Live Pulse Stats Component - Animated real-time metrics
+function LivePulseStats({ submissions }: { submissions: Submission[] }) {
+    const [pulse, setPulse] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => setPulse(p => p + 1), 2000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const todayCount = useMemo(() => {
+        const today = new Date().toDateString();
+        return submissions.filter(s => new Date(s.timestamp).toDateString() === today).length;
+    }, [submissions]);
+
+    const avgRating = useMemo(() => {
+        if (submissions.length === 0) return 0;
+        return (submissions.reduce((acc, s) => acc + s.rating, 0) / submissions.length).toFixed(1);
+    }, [submissions]);
+
+    const stats = [
+        { label: 'Total Feedback', value: submissions.length, icon: MessageCircle, color: 'from-violet-500 to-purple-600' },
+        { label: 'Today\'s Entries', value: todayCount, icon: Zap, color: 'from-amber-500 to-orange-600' },
+        { label: 'Avg Rating', value: avgRating, icon: Heart, color: 'from-rose-500 to-pink-600' },
+        { label: 'AI Processed', value: submissions.filter(s => s.aiResponse).length, icon: Brain, color: 'from-cyan-500 to-blue-600' },
+    ];
+
+    return (
+        <Card className="border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl shadow-2xl lg:col-span-2 overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(129,140,248,0.15),transparent_50%)]" />
+            <CardHeader className="relative">
+                <CardTitle className="text-white flex items-center gap-2">
+                    <motion.div
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                    >
+                        <Sparkles className="h-5 w-5 text-amber-400" />
+                    </motion.div>
+                    Live Pulse Stats
+                    <span className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs text-emerald-400">
+                        <motion.span
+                            className="h-1.5 w-1.5 rounded-full bg-emerald-400"
+                            animate={{ opacity: [1, 0.3, 1] }}
+                            transition={{ duration: 1, repeat: Infinity }}
+                        />
+                        Live
+                    </span>
+                </CardTitle>
+                <CardDescription className="text-white/50">Real-time feedback metrics with AI processing</CardDescription>
+            </CardHeader>
+            <CardContent className="relative">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {stats.map((stat, i) => (
+                        <motion.div
+                            key={stat.label}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.1 }}
+                            className="relative group"
+                        >
+                            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                style={{ background: `linear-gradient(135deg, ${stat.color.split(' ')[0].replace('from-', '')}20, transparent)` }} />
+                            <div className="relative p-4 rounded-2xl border border-white/10 bg-black/30 backdrop-blur-sm">
+                                <div className={`inline-flex p-2 rounded-xl bg-gradient-to-br ${stat.color} mb-3`}>
+                                    <stat.icon className="h-4 w-4 text-white" />
+                                </div>
+                                <motion.div
+                                    key={`${stat.label}-${pulse}`}
+                                    initial={{ scale: 1 }}
+                                    animate={{ scale: [1, 1.05, 1] }}
+                                    transition={{ duration: 0.3 }}
+                                    className="text-3xl font-bold text-white"
+                                >
+                                    {stat.value}
+                                </motion.div>
+                                <p className="text-xs text-white/50 mt-1">{stat.label}</p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
+// Feedback Mood Ring - Animated orbital visualization
+function FeedbackMoodRing({ submissions }: { submissions: Submission[] }) {
+    const moodData = useMemo(() => {
+        const moods = [
+            { name: 'Ecstatic', emoji: '🤩', ratings: [5], color: '#22c55e' },
+            { name: 'Happy', emoji: '🙂', ratings: [4], color: '#84cc16' },
+            { name: 'Neutral', emoji: '😐', ratings: [3], color: '#eab308' },
+            { name: 'Unhappy', emoji: '😕', ratings: [2], color: '#f97316' },
+            { name: 'Frustrated', emoji: '😖', ratings: [1], color: '#ef4444' },
+        ];
+
+        return moods.map(mood => ({
+            ...mood,
+            count: submissions.filter(s => mood.ratings.includes(s.rating)).length,
+            percentage: submissions.length > 0
+                ? Math.round((submissions.filter(s => mood.ratings.includes(s.rating)).length / submissions.length) * 100)
+                : 0
+        }));
+    }, [submissions]);
+
+    const dominantMood = moodData.reduce((a, b) => a.count > b.count ? a : b, moodData[0]);
+
+    return (
+        <Card className="border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl shadow-2xl overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(236,72,153,0.12),transparent_50%)]" />
+            <CardHeader className="relative">
+                <CardTitle className="text-white flex items-center gap-2">
+                    <Target className="h-4 w-4 text-pink-400" />
+                    Feedback Mood Ring
+                </CardTitle>
+                <CardDescription className="text-white/50">Emotional distribution across all feedback</CardDescription>
+            </CardHeader>
+            <CardContent className="relative">
+                <div className="flex flex-col items-center py-4">
+                    {/* Central animated mood display */}
+                    <div className="relative w-40 h-40 mb-6">
+                        {/* Orbital rings */}
+                        {[0, 1, 2].map(ring => (
+                            <motion.div
+                                key={ring}
+                                className="absolute inset-0 rounded-full border border-white/10"
+                                style={{ transform: `scale(${0.6 + ring * 0.2})` }}
+                                animate={{ rotate: ring % 2 === 0 ? 360 : -360 }}
+                                transition={{ duration: 20 + ring * 5, repeat: Infinity, ease: 'linear' }}
+                            />
+                        ))}
+
+                        {/* Orbiting mood indicators */}
+                        {moodData.map((mood, i) => (
+                            <motion.div
+                                key={mood.name}
+                                className="absolute"
+                                style={{
+                                    left: '50%',
+                                    top: '50%',
+                                }}
+                                animate={{
+                                    rotate: 360,
+                                }}
+                                transition={{
+                                    duration: 12 + i * 2,
+                                    repeat: Infinity,
+                                    ease: 'linear',
+                                    delay: i * 0.5,
+                                }}
+                            >
+                                <motion.div
+                                    className="absolute -translate-x-1/2 -translate-y-1/2"
+                                    style={{
+                                        left: `${60 + i * 5}px`,
+                                    }}
+                                    animate={{ scale: [1, 1.2, 1] }}
+                                    transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+                                >
+                                    <div
+                                        className="w-8 h-8 rounded-full flex items-center justify-center text-lg shadow-lg"
+                                        style={{ backgroundColor: `${mood.color}30`, border: `2px solid ${mood.color}` }}
+                                        title={`${mood.name}: ${mood.count}`}
+                                    >
+                                        {mood.emoji}
+                                    </div>
+                                </motion.div>
+                            </motion.div>
+                        ))}
+
+                        {/* Center dominant mood */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <motion.div
+                                className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
+                                style={{
+                                    background: `radial-gradient(circle, ${dominantMood.color}40, ${dominantMood.color}10)`,
+                                    boxShadow: `0 0 40px ${dominantMood.color}30`
+                                }}
+                                animate={{ scale: [1, 1.1, 1] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                            >
+                                {dominantMood.emoji}
+                            </motion.div>
+                        </div>
+                    </div>
+
+                    {/* Mood breakdown bars */}
+                    <div className="w-full space-y-2">
+                        {moodData.map((mood) => (
+                            <div key={mood.name} className="flex items-center gap-3">
+                                <span className="text-lg w-6">{mood.emoji}</span>
+                                <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
+                                    <motion.div
+                                        className="h-full rounded-full"
+                                        style={{ backgroundColor: mood.color }}
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${mood.percentage}%` }}
+                                        transition={{ duration: 1, delay: 0.2 }}
+                                    />
+                                </div>
+                                <span className="text-xs text-white/60 w-12 text-right">{mood.percentage}%</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
     );
 }
 
@@ -204,6 +414,12 @@ export function ChartsView({ submissions }: ChartsViewProps) {
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in fade-in duration-500">
+
+            {/* Live Pulse Stats - Full width */}
+            <LivePulseStats submissions={submissions} />
+
+            {/* Feedback Mood Ring */}
+            <FeedbackMoodRing submissions={submissions} />
 
             {/* Sentiment Gauge */}
             <Card className="border-white/10 bg-white/5 backdrop-blur-xl shadow-lg">
